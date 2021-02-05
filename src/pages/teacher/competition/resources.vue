@@ -299,6 +299,10 @@ export default {
             }) 
         },
         beforeUploadVideo(file){
+            if(this.nowTaskIndex==0&&file.type!='application/pdf'){
+                this.$message('任务书必须上传pdf文件！')
+                return false;
+            }
             this.uploadShow=false
             this.AjaxFile(file,0)
             console.log(this.nowTaskIndex)
@@ -445,6 +449,10 @@ export default {
         //上传附件
         UploadStart(){
             var file = $("#fileFj")[0].files[0];
+            if(this.nowTaskIndex==0&&file.type!='application/pdf'){
+                this.$message('任务书必须上传pdf文件！')
+                return false;
+            }
             this.fuAjaxFile(file, 0);
             console.log(file)
             // this.AjaxFile(file,0);

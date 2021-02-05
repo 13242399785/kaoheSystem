@@ -30,10 +30,10 @@
         </div>
       </div>
     </div>
-    <div class="document-show-content">
-        <div class="document-show-top" v-show="nowData.classId!==4">
-          <div v-if="nowData.urlName.indexOf('.pdf')>-1">
-            <iframe class="pdf-if" :src="pdfUrl" align="center"></iframe>
+    <div class="document-show-content" style="height:63%;">
+        <div class="document-show-top" v-show="nowData.classId!==4" style="height:100%;">
+          <div v-if="nowData.urlName.indexOf('.pdf')>-1"  style="height:100%;">
+            <iframe class="pdf-if" :src="pdfUrl" align="center"  style="height:100%;"></iframe>
           </div>
           <div v-else>
             <img :src="srcCotrol(nowData.urlName)" alt="">

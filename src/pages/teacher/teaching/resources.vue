@@ -176,6 +176,7 @@ export default {
         },
         beforeUploadVideo(file){
             this.uploadShow=false
+           
             this.AjaxFile(file,0)
             return false;
         },
