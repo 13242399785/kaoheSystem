@@ -132,7 +132,7 @@ export default {
             let type=item.url.slice(item.url.indexOf('.'),item.url.length)
             console.log(type)
             if(type=='.mp4'){
-                this.$router.push({name:'studentPlay',params:{id:item.competitionId}})	
+                this.$router.push({name:'competitionPlay',params:{id:item.competitionId}})	
             }else{
                 this.$router.push({name:'competitionDetail',params:{id:item.competitionId}})	
                 console.log(item)
