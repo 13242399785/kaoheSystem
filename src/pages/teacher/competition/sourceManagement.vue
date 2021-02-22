@@ -19,7 +19,7 @@
                 <div class="m-top clearfix">
                     <div class="m-left fl">
                         <!-- <el-checkbox >全选</el-checkbox> -->
-                        <button class="button-auto button-delete">删除</button>
+                        <button class="button-auto button-delete" @click="chooseDel">删除</button>
                         <!-- <button class="button-add margin-l6" @click="dialogVisible=true">添加</button> -->
                     </div>
                     <div class="m-right fr">
@@ -36,8 +36,9 @@
                 <el-table
                     class="my_table"
                     :data="mainData" 
-                    max-height='500'
-                    :height='tableHeight'
+                    max-height='1000'
+                    height='75%'
+                    @selection-change="handleSelectionChange"
                     >
                     <el-table-column
                     type="selection"
@@ -48,13 +49,13 @@
                     className="table-left"
                     label="文件">
                         <template slot-scope="scope" class="dsf">
-                            <p class="video-img">
+                            <p class="video-img" @click="showPlay(scope.row)">
                                 <img :src="srcCotrol(scope.row)"/>
                                 <!-- <span class="video-show">超清</span>
                                 <span class="video-time">01：55</span> -->
                             </p>
                             <div class="video-text">
-                                <p class="video-text-title">
+                                <p class="video-text-title" @click="showPlay(scope.row)">
                                     {{scope.row.competitionName}}
                                 </p>
                                 <p class="video-text-time">
@@ -89,7 +90,7 @@
                         </template>     
                     </el-table-column>
                 </el-table>
-                <div class="page-control clearfix" v-show="pagination.total>3">
+                <div class="page-control clearfix" v-show="pagination.total>10">
                     <el-pagination
                         @current-change="handleCurrentChange"
                         prev-text='上一页'
@@ -121,6 +122,28 @@
             <span slot="footer" class="dialog-footer">
                 <el-button type="primary" @click="delSave">确 定</el-button>
                 <el-button @click="delVisible=false">取 消</el-button>
+            </span>
+        </el-dialog>
+        <!-- 选中删除框 -->
+        <el-dialog
+            v-dialogDrag
+            title="警告"
+            :visible.sync="allDelVisible"
+            class="delete-dialog"
+            width="400px" 
+            :close-on-click-modal='false'
+            >
+            <div class="dialog-wapper">
+                <div class="dialog-list">
+                    <div class="delect-text">
+                        <img src="../../../images/info.png"/>
+                        <span>确定删除所选项吗？</span>
+                    </div>
+                </div>
+            </div>
+            <span slot="footer" class="dialog-footer">
+                <el-button type="primary" @click="alldelSave">确 定</el-button>
+                <el-button @click="allDelVisible=false">取 消</el-button>
             </span>
         </el-dialog>
         <!-- 修改弹窗 -->
@@ -289,7 +312,9 @@ export default {
             pdfUrl:'',
             initUpload:null,//重新上传
             TorcompetitionId:0,
-            listData:[]
+            listData:[],
+            chooseList:[],
+            allDelVisible:false
         }
     },
     mounted(){
@@ -302,6 +327,37 @@ export default {
             this.nowData.subjectId=data;
             this.initGetlist()
             this.getNowsub(data)
+        },
+        //选中
+        handleSelectionChange(val) {
+            this.chooseList=[];
+            for(let i=0;i<val.length;i++){
+                this.chooseList.push(val[i].competitionId)
+            }    
+            console.log(this.chooseList)
+        },
+        //删除选中
+        chooseDel(){
+            if(this.chooseList.length==0){
+                this.$message('请先选中要删除的节点！')
+                return false;
+            }
+            this.allDelVisible=true;
+        },
+        alldelSave(){
+            let that=this;
+            this.$api.Competition.chooseDelTeaching(this.chooseList).then(res=>{
+                if(res.data.success){
+                    that.$message.success('删除成功！')
+                    that.allDelVisible=false;
+                    that.initGetlist()
+                }else{
+                    that.$message(res.data.msg)
+                }
+                // console.log(res.data)
+            }).catch((error) => {
+                console.error(error);
+            })
         },
         //获取当前课题
         getNowsub(id){
@@ -334,7 +390,8 @@ export default {
         handleCurrentChange(val) {
             //改变当前页
             this.pagination.currentPage = val;
-            this.mainData=this.listData.slice((this.pagination.currentPage - 1) * this.pagination.size,this.pagination.currentPage * this.pagination.size);
+            this.getList()
+            // this.mainData=this.listData.slice((this.pagination.currentPage - 1) * this.pagination.size,this.pagination.currentPage * this.pagination.size);
         },
         //缩略图
         srcCotrol(list){
@@ -559,9 +616,9 @@ export default {
                 "pageIndex":this.pagination.currentPage
             }
             this.$api.Competition.getTeachingAll(params).then(res=>{
-                that.listData=res.data.result
-                that.pagination.total=res.data.result.length
-                that.mainData = that.listData.slice((that.pagination.currentPage - 1) * that.pagination.size,that.pagination.currentPage * that.pagination.size);
+                that.mainData=res.data.result
+                that.pagination.total=res.data.total
+                // that.mainData = that.listData.slice((that.pagination.currentPage - 1) * that.pagination.size,that.pagination.currentPage * that.pagination.size);
                 if(res.data.total>0){
                     that.tableHeight='500'
                 }else{
@@ -666,6 +723,16 @@ export default {
             this.pdfUrl=this.$api.serverUrl+'/'+ encodeURI(this.nowTor.url);
             
             // this.nowTor.urlName=this.initUpload.fileName
+        },
+        showPlay(item){
+            console.log(item)
+            let type=item.url.slice(item.url.indexOf('.'),item.url.length)
+            console.log(type)
+            if(type=='.mp4'){
+                this.$router.push({name:'teacherCompetitionPlay',params:{id:item.competitionId}})	
+            }else{
+                this.$router.push({name:'teacherCompetition',params:{id:item.competitionId}})	
+            }
         }
     }
 }

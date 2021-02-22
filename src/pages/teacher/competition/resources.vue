@@ -293,7 +293,12 @@ export default {
             let that=this;
             this.$api.Competition.getType().then(res=>{
                 that.classList=res.data.result
-                console.log(res.data)
+                for(let i=0;i<that.classList.length;i++){
+                    if(parseInt(that.classList[i].classId)==4){
+                        that.classList.splice(i,1)
+                        console.log(i)
+                    }
+                }
             }).catch((error) => {
                 console.error(error);
             }) 
@@ -301,6 +306,10 @@ export default {
         beforeUploadVideo(file){
             if(this.nowTaskIndex==0&&file.type!='application/pdf'){
                 this.$message('任务书必须上传pdf文件！')
+                return false;
+            }
+            if(file.name.indexOf('.7z')>-1){
+                this.$message('当前不允许上传该类型文件！')
                 return false;
             }
             this.uploadShow=false
@@ -382,6 +391,7 @@ export default {
                if(res.data.success){
                    that.$message.success('任务书发布成功！')
                    that.uploadShow=true
+                   that.clearItem()
                }else{
 
                }
@@ -427,6 +437,7 @@ export default {
                     }else{
                         that.$message.success('文件发布完成！')
                         that.uploadShow=true
+                        that.clearItem()
                     }
                 }else{
                    that.$message.error(res.data.msg) 
@@ -435,6 +446,15 @@ export default {
                 console.error(error);
             })
             // console.log(this.$refs.upload.submit())
+        },
+        clearItem(){
+            this.nowData={
+                'competitionName':'',
+                'subjectId':null,
+                "classID":null,
+                "url": "",
+                "urlName": "",
+            }
         },
         //获取当前课题
         getNowsub(id){

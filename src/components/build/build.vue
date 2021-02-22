@@ -146,7 +146,7 @@ export default {
       console.log(data)
       // 数据查找结果填充
       if (!value) return true;
-      return data.text.indexOf(value) !== -1;
+      return data.subjectName.indexOf(value) !== -1;
     },
     handleNodeClick(data, node) {
       // 点击节点触发事件，向父组件传递当前选中id

@@ -25,7 +25,7 @@
 		        	<div class="play-text fr">
 		        		<h3>{{nowUrl=='Teaching'?nowVideo.teachingName:(nowUrl=='Training'?nowVideo.practiceName:nowVideo.competitionName)}}</h3>
 		        		<p class="clearfix play-detail">
-		        			<span class="fl">{{nowVideo.createBy}}</span>
+		        			<span class="fl">{{formattterName(nowVideo.createBy)}}</span>
 		        			<span class="fr">上传于：<span></span>{{format(nowVideo.createTime)}}</span>
 		        			<br/>
 		        		</p>
@@ -88,7 +88,8 @@
 				commentNum:'',
                 showqr:false,
 				playControl:false,
-				nowUrl:'teaching'
+				nowUrl:'teaching',
+				nameList:[]
 	    	}
 		},
 		mounted(){
@@ -105,9 +106,10 @@
 				this.nowUrl='Training'
 			}
 			this.playShow();
+			
 		},
 		created(){
-			
+			this.getNamelist()
 		},
 		methods:{
 			//下载
@@ -170,6 +172,27 @@
                     console.error(error);
                 }) 
 
+			},
+			//获取用户列表
+			getNamelist(){
+				let that=this;
+				this.$api.User.getUserList().then(res=>{
+					if(res.data.success){
+						that.namelist=res.data.result
+					}else{
+						that.$message(res.data.msg)
+					}
+				}).catch((error) => {
+					console.error(error);
+				})
+			},
+			//用户id对应名称
+			formattterName(cellValue){
+				for(let i=0;i<this.namelist.length;i++){
+					if(this.namelist[i].userId==cellValue){
+						return this.namelist[i].loginId
+					}
+				}
 			},
 			// getsrc(){
 			// 	return this.$route.params.src

@@ -1,7 +1,8 @@
 <!--实训管理-->
 <template>
   <div class="all-wapper" style="overflow:auto;">
-    <hea :isshow="1"></hea>
+    <hea :isshow="1" v-if="!nowChoose"></hea>
+    <teahea :isshow="1" v-else></teahea>
     <div class="header-topimg">
       <div class="auto">
         <div class="felx-wapper list-tag">
@@ -9,7 +10,7 @@
             <span>文件列表</span>&gt;<span>{{nowUrl=='Teaching'?nowData.teachingName:(nowUrl=='Training'?nowData.practiceName:nowData.competitionName)}}</span>
           </p>
           <p>
-            <el-button type="primary" @click="down"
+            <el-button type="primary" @click="down" v-if="nowData.classId==3&&!nowChoose||nowChoose"
               >下载<i class="el-icon-upload el-icon--right"></i
             ></el-button>
           </p>
@@ -22,7 +23,7 @@
             <div class="felx-wapper-r">
               <p><span>日期：</span>{{formateDatetime(nowData.createTime)}}</p>
               <p><span>分类：</span>{{formattterRole(nowData.classId)}}</p>
-              <p><span>上传：</span>{{nowUrl=='Teaching'?nowData.teachingId:(nowUrl=='Training'?nowData.practiceId:nowData.competitionId)}}</p>
+              <p><span>上传：</span>{{formattterName(nowData.createBy)}}</p>
             </div>
           </div>
           <!-- <div class="flex-wapper-content">发生的发大水发大水发大水发生的发的说法撒旦法撒旦法</div> -->
@@ -32,15 +33,13 @@
     </div>
     <div class="document-show-content" style="height:63%;">
         <div class="document-show-top" v-show="nowData.classId!==4" style="height:100%;">
-          <div v-if="nowData.urlName.indexOf('.pdf')>-1"  style="height:100%;">
+          <div v-if="pdfShow"  style="height:100%;">
             <iframe class="pdf-if" :src="pdfUrl" align="center"  style="height:100%;"></iframe>
           </div>
-          <div v-else>
+          <div v-if="!pdfShow&&nowData.urlName">
             <img :src="srcCotrol(nowData.urlName)" alt="">
             <P><span>{{nowData.urlName}}</span></P>
           </div>
-          
-          
         </div>
         
         <div class="paf-waper" v-if="nowData.classId==4" >
@@ -52,22 +51,32 @@
 </template>
 <script>
 import hea from "@/components/headers/stu_header";
+import teahea from "@/components/headers/header";
 import navlist from "@/components/nav";
 export default {
   components: {
     hea,
-    navlist,
+    navlist,teahea
   },
   data() {
     return {
       nowUrl:'',
       nowData:{},
       classList:[],
-      pdfUrl:''
+      pdfUrl:'',
+      namelist:[],
+      nowChoose:false,
+      pdfShow:false
     };
   },
   mounted(){
     let url=window.location.href;
+    console.log(url)
+    if(url.indexOf('teacher')>-1){
+      this.nowChoose=true
+    }else{
+      this.nowChoose=false
+    }
     if(url.indexOf('teaching')>-1){//教学
       this.nowUrl='Teaching'
     }else if(url.indexOf('competition')>-1){//竞赛
@@ -77,6 +86,7 @@ export default {
     }
     this.getNowtor()
     this.getClass()
+    this.getNamelist()
   },
   methods: {
     //下载
@@ -91,6 +101,9 @@ export default {
           console.log(res.data)
           that.nowData=res.data.result
           that.pdfUrl=that.$api.serverUrl+'/'+that.nowData.url;
+          if(this.nowData.urlName.indexOf('.pdf')>-1){
+            this.pdfShow=true
+          }
       }).catch((error) => {
           console.error(error);
       })
@@ -104,13 +117,34 @@ export default {
             console.error(error);
         }) 
     },
+    //获取用户列表
+    getNamelist(){
+      let that=this;
+      this.$api.User.getUserList().then(res=>{
+          if(res.data.success){
+              that.namelist=res.data.result
+          }else{
+              that.$message(res.data.msg)
+          }
+      }).catch((error) => {
+          console.error(error);
+      })
+    },
+    //用户id对应名称
+    formattterName(cellValue){
+        for(let i=0;i<this.namelist.length;i++){
+            if(this.namelist[i].userId==cellValue){
+                return this.namelist[i].loginId
+            }
+        }
+    },
     //缩略图
     srcCotrol(list){
       console.log(list)
         var type=list.slice(list.lastIndexOf('.'),list.length)
         var src=list;
         //给图片
-        if(type=='.png'||type=='.PNG'){
+        if(type=='.png'||type=='.PNG'||type=='.jpg'||type=='.JPG'||type=='.JPEG'||type=='.jpeg'){
           return this.$api.serverUrl+'/'+this.nowData.url;
         }else if(type=='.doc'||type=='.docx'){
             return require("../images/file_05.png")

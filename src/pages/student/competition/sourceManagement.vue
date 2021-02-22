@@ -45,13 +45,14 @@
                                     <div class="mock">
                                         
                                     </div>
-                                    <span class="mockdown mockdownl" @click="down(list)"><i class="el-icon-videoxiazai"></i>下载</span>
-                                    <span class="mockdown mockdownr"  @click="showPlay(list)"><i class="el-icon-videofenxiang"></i>查看</span>
+                                    <span v-if="list.classId==3" class="mockdown  mockdownl" @click="down(list)"><i class="el-icon-videoxiazai"></i>下载</span>
+                                    <span v-if="list.classId!=3" class="mockdown mockdownm" @click="showPlay(list)"><i class="el-icon-view"></i> 查看</span>
+                                    <span v-if="list.classId==3" class="mockdown mockdownr" @click="showPlay(list)"><i class="el-icon-view"></i> 查看</span>
                                 </div>
-                                <div class="list-tile">{{list.competitionName}}</div>
+                                <div class="list-tile" @click="showPlay(list)">{{list.competitionName}}</div>
                                 <div class="list-bottom clearfix">
-                                    <span class="list-list fl"></span>
-                                    <span class="list-time fr">{{format(list.createTime)}}</span>
+                                    <span class="list-list fl">{{format(list.createTime)}}</span>
+                                    <span class="list-time fr"></span>
                                     <!-- <span><i class="el-icon-videoxiaoxi"></i> {{list.comment}}</span> -->
                                 </div>
                             </div>				
@@ -127,7 +128,7 @@ export default {
             this.getNowsub(data)
         },
         showPlay(item){
-            console.log(item)
+            // console.log(item)
             let type=item.url.slice(item.url.indexOf('.'),item.url.length)
             console.log(type)
             if(type=='.mp4'){

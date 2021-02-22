@@ -165,12 +165,14 @@ export default {
       nowTeacher:{},
       nowData:{},
       nowPoint:this.$api.serverUrl,
-      nowFu:null
+      nowFu:null,
+      nameList:[],
     };
   },
   mounted(){
     this.nowPoint=this.$api.serverUrl
     let url=window.location.href;
+    
     if(url.indexOf('teaching')>-1){//教学
       this.nowUrl='Teaching'
     }else if(url.indexOf('competition')>-1){//竞赛
@@ -178,7 +180,7 @@ export default {
     }else if(url.indexOf('training')>-1){//实训
       this.nowUrl='Training'
     }
-    console.log(this.nowData)
+    // console.log(this.nowData)
     this.getNowtor()
     this.getClass()
   },
@@ -192,9 +194,10 @@ export default {
     //获取当前资源
     getNowtor(){
       let that=this
+      console.log(this.nowUrl)
       this.$api[this.nowUrl].getSgTeaching(this.$route.params.id).then(res=>{
           that.nowData=res.data.result
-          console.log(this.nowData)
+          // console.log(this.nowData)
           if(that.nowData.classId==4){
             that.getTorlist();//获取评分列表
             this.getScoremodel()
@@ -203,6 +206,7 @@ export default {
           console.error(error);
       })
     },
+    
     //下载附件
     downFu(){
       window.location.href=this.$api.serverUrl+'/'+this.scoreNow.url
@@ -210,8 +214,13 @@ export default {
     //上传附件
     UploadStart(){
       var file = $("#fileFj")[0].files[0];
+      console.log('当前文件'+file)
+      if(file.name.indexOf('.7z')>-1){
+          this.$message('当前不允许上传该类型文件！')
+          return false;
+      }
       this.AjaxFile(file, 0);
-      console.log(file)
+      
       // this.AjaxFile(file,0);
     },
     AjaxFile(file,i){

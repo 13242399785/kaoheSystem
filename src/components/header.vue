@@ -44,7 +44,7 @@
 			return{
 				user:false,
 				unlogin:false,
-				Toptitle:"考核系统",
+				Toptitle:"智能制造数字孪生仿真与调试系统",
 				username:localStorage.getItem('username'),
 				navList:[
 					{name:'homeTeacher',text:'/home/teacher',nowtext:'home',content:'首页'},
@@ -143,7 +143,6 @@
 		color: #585858;
 		height: 100%;
 	}
-	.logo-img{margin-top: 19px;}
 	.img-mar{margin: 11px 24px 0px 30px;}
 	.header-left span{
 		font-size: 24px;

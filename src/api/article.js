@@ -24,6 +24,14 @@ const article={
   loginOut(params){
     return axios.post(`${serverUrl}/Auth/SignOut?UserId=${params.UserId}`)
   },
+  //获取教师首页列表
+  homeList(params){
+    let sessionId=localStorage.getItem('sessionId');
+      return axios.post(`${serverUrl}/Teaching/GetHomeDataList`,params,{
+        headers:{
+          'Authorization':Authorization_l+' '+sessionId
+      }}); 
+  },
   /**
    * 权限  start
    */
@@ -358,6 +366,14 @@ const article={
             'Authorization':Authorization_l+' '+sessionId
         }});
       },
+      //删除选中教学资源
+      chooseDelTeaching(params){
+        let sessionId=localStorage.getItem('sessionId');
+        return axios.get(`${serverUrl}/Teaching/DeleteTeachings?TeachingId=${params}`,{
+          headers:{
+            'Authorization':Authorization_l+' '+sessionId
+        }});
+      },
   },
   /**
    * 教学 end
@@ -498,6 +514,14 @@ const article={
     delTeaching(params){
       let sessionId=localStorage.getItem('sessionId');
       return axios.get(`${serverUrl}/Practice/DeletePractice?PracticeId=${params}`,{
+        headers:{
+          'Authorization':Authorization_l+' '+sessionId
+      }});
+    },
+    //删除选中实训资源
+    chooseDelTeaching(params){
+      let sessionId=localStorage.getItem('sessionId');
+      return axios.get(`${serverUrl}/Practice/DeletePractices?PracticeId=${params}`,{
         headers:{
           'Authorization':Authorization_l+' '+sessionId
       }});
@@ -748,6 +772,14 @@ const article={
     delTeaching(params){
       let sessionId=localStorage.getItem('sessionId');
       return axios.get(`${serverUrl}/Competition/DeleteCompetition?CompetitionId=${params}`,{
+        headers:{
+          'Authorization':Authorization_l+' '+sessionId
+      }});
+    },
+    //删除竞赛资源
+    chooseDelTeaching(params){
+      let sessionId=localStorage.getItem('sessionId');
+      return axios.get(`${serverUrl}/Competition/DeleteCompetitions?CompetitionId=${params}`,{
         headers:{
           'Authorization':Authorization_l+' '+sessionId
       }});

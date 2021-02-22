@@ -120,7 +120,9 @@ html{
 /* list */
 .list-all{
 	height: 500px; max-height: 500px;overflow: auto;    min-width: 892px;
+	/* height: 80%;overflow: auto;  */
 }
+
 .list-all li{position: relative;}
 .list-all li{font-size:0;display:inline-block;width: 202px;margin-right: 22px;overflow: hidden;margin-bottom: 24px;}
 .list-all li:nth-of-type(4n){margin-right: 0;}
@@ -129,16 +131,20 @@ html{
 .list-img .mockdown{transition: all ease .5s;position: absolute;cursor: pointer;font-size: 14px;color: #fff;top: 44px;z-index: 99;}
 .mockdownl{left:-100%; }
 .mockdownr{right:-100%; }
+.mockdownm{
+	left:-100%;
+}
 .list-img:hover .mock{
 	top:0;
 	left: 0;
 }
 .list-img:hover .mockdownl{left:30px;}
+.list-img:hover .mockdownm{left:80px;}
 .list-img:hover .mockdownr{right:30px;}
 .list-img img{width: 100%;}
 .list-img .type{position: absolute;top: 0;background: rgba(0,0,0,.2);padding: 2px 6px;right: 10px;border-bottom-left-radius: 5px;border-bottom-right-radius: 5px;color: #c8ad68;}
 .list-img .time{position: absolute;bottom: 6px;right: 10px;background: rgba(124,124,124,0.8);color: #fff;padding: 2px 5px;}
-.list-all .list-tile{font-size: 16px;color: #333;margin: 6px 0 2px 0;overflow: hidden;
+.list-all .list-tile{font-size: 16px;color: #333;margin: 6px 0 2px 0;overflow: hidden;cursor: pointer;
 white-space: nowrap;
 text-overflow: ellipsis;}
 .list-all .list-bottom{font-size: 14px;color: #c0c0c0;text-align: center;overflow: hidden;white-space: nowrap;text-overflow: hidden;}

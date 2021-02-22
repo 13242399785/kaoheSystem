@@ -2,7 +2,7 @@
     <div class="auto">
         <div class="auto margin-bot">
             <div class="item-list">
-                <span @click="getSub(0)" :class="parseInt(nowData.roleId)==0?'item-ative':''">全部({{mainData.length}})</span>
+                <span @click="getSub(0)" :class="parseInt(nowData.roleId)==0?'item-ative':''">全部({{listData.length}})</span>
                 <span  :class="parseInt(nowData.roleId)==parseInt(item.roleId)?'item-ative':''" @click="getSub(item.roleId)" v-for="(item,index) in roleList" :key="index">{{item.roleName}}</span>
             </div>
 			<p class="video-all"></p>

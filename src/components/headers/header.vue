@@ -3,7 +3,7 @@
 		<div class="header border-b">
 			<div class="auto clearfix">
 				<div class="header-left fl">
-					<img class="logo-img" src="../../images/logo.png" width="110" height="25" />
+					<img class="logo-img" src="../../images/logo.png" width="200" height="46" />
 					<!-- <img class="img-mar" src="../images/video.png" width="56" height="40" /> -->
 					<span style="padding-left:12px;">{{Toptitle}}</span>
 				</div>
@@ -44,7 +44,7 @@
 			return{
 				user:false,
 				unlogin:false,
-				Toptitle:"考核系统",
+				Toptitle:"智能制造数字孪生仿真与调试系统",
 				username:localStorage.getItem('userName'),
 				navList:[
 					{name:'homeTeacher',text:'/home/teacher',nowtext:'home',content:'首页'},
@@ -129,7 +129,6 @@
 		color: #585858;
 		height: 100%;
 	}
-	.logo-img{margin-top: 19px;}
 	.img-mar{margin: 11px 24px 0px 30px;}
 	.header-left span{
 		font-size: 24px;

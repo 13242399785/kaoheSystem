@@ -44,13 +44,14 @@
                                     <div class="mock">
                                         
                                     </div>
-                                    <span class="mockdown mockdownl" @click="down(list)"><i class="el-icon-videoxiazai"></i>下载</span>
-                                    <span class="mockdown mockdownr" @click="showPlay(list)"><i class="el-icon-videofenxiang"></i>查看</span>
+                                   <span v-if="list.classId==3" class="mockdown  mockdownl" @click="down(list)"><i class="el-icon-videoxiazai"></i>下载</span>
+                                    <span v-if="list.classId!=3" class="mockdown mockdownm" @click="showPlay(list)"><i class="el-icon-view"></i> 查看</span>
+                                    <span v-if="list.classId==3" class="mockdown mockdownr" @click="showPlay(list)"><i class="el-icon-view"></i> 查看</span>
                                 </div>
-                                <div class="list-tile">{{list.teachingName}}</div>
+                                <div class="list-tile" @click="showPlay(list)">{{list.teachingName}}</div>
                                 <div class="list-bottom clearfix">
-                                    <span class="list-list fl"></span>
-                                    <span class="list-time fr">{{format(list.createTime)}}</span>
+                                    <span class="list-list fl">{{format(list.createTime)}}</span>
+                                    <span class="list-time fr"></span>
                                     <!-- <span><i class="el-icon-videoxiaoxi"></i> {{list.comment}}</span> -->
                                 </div>
                             </div>				
@@ -84,7 +85,7 @@ export default {
             mainData:[],
             pagination: {
                 //分页参数
-                arr: [10, 20, 30, 40, 50],
+                arr: [20, 30, 40, 50],
                 size: 20,
                 currentPage: 1,
                 total:0
@@ -157,11 +158,10 @@ export default {
             return y+'-'+add0(m)+'-'+d+'  '+h+':'+add0(mm);
         },
         showPlay(item){
-            console.log(item)
             let type=item.url.slice(item.url.indexOf('.'),item.url.length)
             console.log(type)
             if(type=='.mp4'){
-                this.$router.push({name:'studentPlay',params:{id:item.teachingId}})	
+                this.$router.push({name:'teachingPlay',params:{id:item.teachingId}})	
             }else{
                 this.$router.push({name:'teachingDetail',params:{id:item.teachingId}})	
             }
@@ -178,7 +178,7 @@ export default {
 			this.showqr=false;
         },
         initGetlist(){
-            this.pagination.size=10
+            this.pagination.size=20
             this.pagination.currentPage=1
             this.getList()
         },
@@ -203,6 +203,12 @@ export default {
             }).catch((error) => {
                 console.error(error);
             }) 
+        },
+        handleCurrentChange(val) {
+            //改变当前页
+            this.pagination.currentPage = val;
+            this.getList()
+            // this.mainData=this.listData.slice((this.pagination.currentPage - 1) * this.pagination.size,this.pagination.currentPage * this.pagination.size);
         },
         getClass(){
             let that=this;

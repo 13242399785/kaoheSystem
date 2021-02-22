@@ -114,8 +114,13 @@ export default new Router({
     {path: '/training/detail/:id',name: 'trainingDetail',component:() => import('@/pages/detail/content')},//普通文件 
     {path: '/competition/detail/:id',name: 'competitionDetail',component:() => import('@/pages/detail/content')},//普通文件 
     //老师首页详情
-    {path: '/teacher/teaching/:id',name: 'teacherPlay',component:() => import('@/pages/teacher/play')},
-    {path: '/student/teaching/:id',name: 'studentPlay',component:() => import('@/pages/student/play')}
+    {path: '/teacher/teaching/detail/:id',name: 'teacherTeaching',component:() => import('@/pages/detail/content')},//普通文件  
+    {path: '/teacher/training/detail/:id',name: 'teacherTraining',component:() => import('@/pages/detail/content')},//普通文件 
+    {path: '/teacher/competition/detail/:id',name: 'teacherCompetition',component:() => import('@/pages/detail/content')},//普通文件 
+    {path: '/teacher/teaching/:id',name: 'teacherTeachingPlay',component:() => import('@/pages/teacher/play')},
+    {path: '/teacher/training/:id',name: 'teacherTrainingPlay',component:() => import('@/pages/teacher/play')},
+    {path: '/teacher/competition/:id',name: 'teacherCompetitionPlay',component:() => import('@/pages/teacher/play')},
+    // {path: '/student/teaching/:id',name: 'studentPlay',component:() => import('@/pages/student/play')}
   ],
   
 })

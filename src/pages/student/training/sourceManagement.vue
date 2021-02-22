@@ -45,13 +45,15 @@
                                     <div class="mock" >
                                         
                                     </div>
-                                    <span class="mockdown mockdownl" @click="down(list)"><i class="el-icon-videoxiazai"></i>下载</span>
-                                    <span class="mockdown mockdownr" @click="showPlay(list)"><i class="el-icon-videofenxiang"></i>查看</span>
+
+                                    <span v-if="list.classId==3" class="mockdown  mockdownl" @click="down(list)"><i class="el-icon-videoxiazai"></i>下载</span>
+                                    <span v-if="list.classId!=3" class="mockdown mockdownm" @click="showPlay(list)"><i class="el-icon-view"></i> 查看</span>
+                                    <span v-if="list.classId==3" class="mockdown mockdownr" @click="showPlay(list)"><i class="el-icon-view"></i> 查看</span>
                                 </div>
-                                <div class="list-tile">{{list.practiceName}}</div>
+                                <div class="list-tile" @click="showPlay(list)">{{list.practiceName}}</div>
                                 <div class="list-bottom clearfix">
-                                    <span class="list-list fl"></span>
-                                    <span class="list-time fr">{{format(list.createTime)}}</span>
+                                    <span class="list-list fl">{{format(list.createTime)}}</span>
+                                    <span class="list-time fr"></span>
                                     <!-- <span><i class="el-icon-videoxiaoxi"></i> {{list.comment}}</span> -->
                                 </div>
                             </div>				
@@ -83,6 +85,7 @@ export default {
     data(){
         return{
             mainData:[],
+            listData:[],
             pagination: {
                 //分页参数
                 arr: [10, 20, 30, 40, 50],
@@ -194,8 +197,9 @@ export default {
                 "pageIndex":this.pagination.currentPage
             }
             this.$api.Training.getTeachingAll(params).then(res=>{
-                that.mainData=res.data.result
-                that.pagination.total=res.data.total
+                that.listData=res.data.result
+                that.pagination.total=res.data.result.length
+                that.mainData = that.listData.slice((that.pagination.currentPage - 1) * that.pagination.size,that.pagination.currentPage * that.pagination.size);
                 if(res.data.total>0){
                     that.tableHeight='500'
                 }else{

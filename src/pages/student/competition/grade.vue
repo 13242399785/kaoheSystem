@@ -11,7 +11,7 @@
                 <div class="m-top clearfix">
                     <div class="m-left fl">
                         <!-- <el-checkbox >全选</el-checkbox> -->
-                        <button class="button-auto button-delete">删除</button>
+                        <!-- <button class="button-auto button-delete">删除</button> -->
                         <!-- <button class="button-add margin-l6" @click="dialogVisible=true">添加</button> -->
                     </div>
                     <div class="m-right fr">

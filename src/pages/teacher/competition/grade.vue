@@ -11,7 +11,7 @@
                 <div class="m-top clearfix">
                     <div class="m-left fl">
                         <!-- <el-checkbox >全选</el-checkbox> -->
-                        <button class="button-auto button-delete">删除</button>
+                        <!-- <button class="button-auto button-delete">删除</button> -->
                         <button class="button-auto button-export margin-l6" @click="exportData">导出</button>
                     </div>
                     <div class="m-right fr">
@@ -127,7 +127,7 @@
                     <div class="fen-item" v-for="(item,index) in gradeList" :key="index">
                         <div class="flex-between fen-title-be">
                             <span class="title-l">评分表{{index+1}}:{{item.testQuestionsName}}</span>
-                            <span class="title-r">评分老师</span>
+                            <span class="title-r">评分老师：{{formattterName(item.scoreBy)}}</span>
                         </div>
                         <table class="fen-table" border="0">
                             <tr>
@@ -153,6 +153,9 @@
                                 <td v-if='item.children.length!=0'>{{ sumScore(item.children, "score") }}</td>
                             </tr>
                         </table>
+                    </div>
+                    <div class="fuj">
+                        <a target='blank' :href="$api.serverUrl+'/'+nowTor.url">{{nowTor.urlName}}</a>
                     </div>
                 </div>
                 </div>
@@ -217,8 +220,12 @@ export default {
             delVisible:false,
             setData:{},
             scoreEdir:true,
-            nowTor:{}
+            nowTor:{},
+            namelist:[]
         }
+    },
+    created(){
+        this.getNamelist()
     },
     methods:{
         getBuildId(data){
@@ -247,6 +254,27 @@ export default {
             }).catch((error) => {
                 console.error(error);
             })
+        },
+        //获取用户列表
+        getNamelist(){
+            let that=this;
+            this.$api.User.getUserList().then(res=>{
+                if(res.data.success){
+                    that.namelist=res.data.result
+                }else{
+                    that.$message(res.data.msg)
+                }
+            }).catch((error) => {
+                console.error(error);
+            })
+        },
+        //用户id对应名称
+        formattterName(cellValue){
+            for(let i=0;i<this.namelist.length;i++){
+                if(this.namelist[i].userId==cellValue){
+                    return this.namelist[i].loginId
+                }
+            }
         },
         //获取成绩
         getPractice(){

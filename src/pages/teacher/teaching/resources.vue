@@ -176,7 +176,10 @@ export default {
         },
         beforeUploadVideo(file){
             this.uploadShow=false
-           
+            if(file.name.indexOf('.7z')>-1){
+                this.$message('当前不允许上传该类型文件！')
+                return false;
+            }
             this.AjaxFile(file,0)
             return false;
         },
@@ -210,12 +213,22 @@ export default {
                 if(res.data.success){
                     that.$message.success('文件发布完成！')
                     that.uploadShow=true
+                    that.clearItem()
                 }
             }).catch((error) => {
                 console.error(error);
             })
             // console.log(this.$refs.upload.submit())
-        }
+        },
+        clearItem(){
+            this.nowData={
+                'teachingName':'',
+                'subjectId':null,
+                "classID":null,
+                "url": "",
+                "urlName": "",
+            }
+        },
     }
 }
 </script>

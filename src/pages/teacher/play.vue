@@ -4,7 +4,7 @@
 		<div class="play-wapper">
 			<div class="auto">
 				<div class="play-top">
-					<router-link to="/home/teacher">文件列表</router-link> &gt; <span>视频播放</span>
+					<span>文件列表</span> &gt; <span>视频播放</span>
 				</div>
 				<div class="play-video clearfix" >
 				 	<video ref="viodeRef" id="video"
@@ -25,7 +25,7 @@
 		        	<div class="play-text fr">
 		        		<h3>{{nowVideo.teachingName}}</h3>
 		        		<p class="clearfix play-detail">
-		        			<span class="fl">{{nowVideo.createBy}}</span>
+		        			<span class="fl">{{formattterName(nowVideo.createBy)}}</span>
 		        			<span class="fr">上传于：<span></span>{{format(nowVideo.createTime)}}</span>
 		        			<br/>
 		        		</p>
@@ -41,8 +41,8 @@
 							<span class="hot hot-t"><i class="el-icon-view"></i> {{play.click}}</span>&nbsp;&nbsp;&nbsp;&nbsp;
 							<span class="hot hot-b"><i class="el-icon-videoxiaoxi"></i> {{commentNum}}</span>
 						</p>
-						<span class="padding-r" @click="down"><i class="el-icon-videoxiazai"></i> 下载</span>&nbsp;&nbsp;&nbsp;&nbsp;
-						<span  @click="upqr"><i class="el-icon-videofenxiang"></i> 在线分享</span>
+						<!-- <span class="padding-r" @click="down"><i class="el-icon-videoxiazai"></i> 下载</span>&nbsp;&nbsp;&nbsp;&nbsp;
+						<span  @click="upqr"><i class="el-icon-videofenxiang"></i> 在线分享</span> -->
 					</div>
 				</div>				
 			</div>	
@@ -87,14 +87,26 @@
                 },
 				commentNum:'',
                 showqr:false,
-                playControl:false
+				playControl:false,
+				namelist:[],
+				nowUrl:''
 	    	}
 		},
 		mounted(){
 			this.id=parseInt(this.$route.params.id)
+			let url=window.location.href;
+			if(url.indexOf('teaching')>-1){//教学
+				this.nowUrl='Teaching'
+			}else if(url.indexOf('competition')>-1){//竞赛
+				this.nowUrl='Competition'
+			}else if(url.indexOf('training')>-1){//实训
+				this.nowUrl='Training'
+			}
+			this.getNamelist()
+			this.playShow();
 		},
 		created(){
-			this.playShow();
+			
 		},
 		methods:{
 			//下载
@@ -138,6 +150,27 @@
 			qrHidden(){//二维码隐藏
 				this.showqr=false;
 			},
+			//获取用户列表
+			getNamelist(){
+				let that=this;
+				this.$api.User.getUserList().then(res=>{
+					if(res.data.success){
+						that.namelist=res.data.result
+					}else{
+						that.$message(res.data.msg)
+					}
+				}).catch((error) => {
+					console.error(error);
+				})
+			},
+			//用户id对应名称
+			formattterName(cellValue){
+				for(let i=0;i<this.namelist.length;i++){
+					if(this.namelist[i].userId==cellValue){
+						return this.namelist[i].loginId
+					}
+				}
+			},
 			yanshi(){
 				const _this=this;
 				setTimeout(function(){
@@ -146,12 +179,13 @@
 			},
 			//根据id获取信息
 			playShow(){
-                let that=this
-                this.$api.Teaching.getSgTeaching(this.$route.params.id).then(res=>{
+				let that=this
+				console.log(this.nowUrl)
+                this.$api[this.nowUrl].getSgTeaching(this.$route.params.id).then(res=>{
                     that.nowVideo=res.data.result
                     console.log(res.data)
                     that.playControl=true;
-                    that.playsrc='http://192.168.5.147:8080/apis/'+that.nowVideo.url
+                    that.playsrc=this.$api.serverUrl+'/'+that.nowVideo.url
                 }).catch((error) => {
                     console.error(error);
                 }) 
