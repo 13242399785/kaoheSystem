@@ -11,7 +11,6 @@
 		               class="video-js vjs-default-skin vjs-big-play-centered"
 		               controls
 		               preload="auto"
-									 autoplay
 		               width="100%"
 		               controlsList="nodownload"
 		               height="auto"

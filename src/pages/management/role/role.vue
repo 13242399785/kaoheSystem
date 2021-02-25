@@ -1,5 +1,5 @@
 <template>
-    <div class="auto">
+    <div class="">
         <div class="auto margin-bot">
             <div class="item-list">
                 <span class="item-ative">角色数量({{mainData.length}})</span>
@@ -8,22 +8,25 @@
 			<div class="m-top clearfix">
 				<div class="m-left fl">
 					<!-- <el-checkbox >全选</el-checkbox> -->
-					<button class="button-auto button-delete">删除</button>
+					<!-- <button class="button-auto button-delete">删除</button> -->
 					<button class="button-add margin-l6" @click="addRole">添加</button>
 				</div>
 				<div class="m-right fr">
 					
 					<el-input
 					    placeholder="请输入关键字"
-					    suffix-icon="el-icon-search"
+                        suffix-icon="el-icon-search"
+					    v-model="searchData.Name"
 					    >
 					  </el-input>
+                      <div class="sou-w" @click="fleeData">搜索</div>
 				</div>
 			</div>
 			<!--table-->
             <el-table
                 class="my_table"
                 :data="mainData" 
+                height="560"
                 style="width: 100%">
                 <el-table-column
                 type="selection"
@@ -39,19 +42,6 @@
                 prop="roleName"
                 label="角色名称">
                 </el-table-column>
-                <!-- <el-table-column
-                label="权限详情">
-                <template slot-scope="scope">
-                    <div class="video-control video-control-d">
-                        <el-button type="text" @click="roleD(scope.row)">权限详情</el-button>
-                    </div>
-                </template> 
-                </el-table-column> -->
-                
-                <!-- <el-table-column
-                prop="registerAdress"
-                label="创建时间">
-                </el-table-column> -->
                 <el-table-column
                 prop="update_dt"
                 :formatter="formateDatetime"
@@ -74,6 +64,16 @@
                     </template>    
                 </el-table-column>
             </el-table>
+            <div class="page-control clearfix" v-show="pagination.total>3">
+                <el-pagination
+                    @current-change="handleCurrentChange"
+                    prev-text='上一页'
+                    next-text='下一页'
+                    :page-size="pagination.size"
+                    layout="prev, pager, next"
+                    :total="pagination.total">
+                </el-pagination>
+            </div>
 		</div>
         <!-- 弹出层 -->
         <el-dialog
@@ -146,8 +146,17 @@ export default {
                 "update_dt": new Date(),
                 "remarks": ""
             },
+            pagination: {
+                //分页参数
+                arr: [10, 20, 30, 40, 50],
+                size: 10,
+                currentPage: 1,
+                total:0
+            },
             dialogText:'',
-            
+            searchData:{
+                Name:''
+            },
         }
     },
     mounted(){
@@ -168,7 +177,10 @@ export default {
                 "remarks": ""
             }
         },
-        
+        //序号
+        getIndex(index){
+            return (this.pagination.currentPage-1)*this.pagination.size+index+1;
+        },
         editorRole(item){
             this.dialogText='修改新增'
             this.nowControl=1;
@@ -181,6 +193,26 @@ export default {
                 "update_dt": item.update_dt,
                 "remarks": item.remarks
             }
+        },
+        // 查找过滤
+        fleeData(){
+            
+            let that=this,data;
+            let str=this.searchData.Name;
+            if(this.listData.length==0){
+                data=[]
+            }else if(str==''){
+               data = that.listData.slice(0, that.pagination.size)
+            }else if(str){
+                data=[];
+                that.listData.forEach(el => {
+                    if(el.roleName.indexOf(str)!=-1){
+                        data.push(el)
+                    }
+                });
+            }
+            // console.log(data)
+            this.mainData=data   
         },
         saveRole(){
             let that=this;
@@ -237,7 +269,9 @@ export default {
             this.$api.Role.getRoleList().then(res=>{
                 console.log(res.data)
                 if(res.data.success){
-                    that.mainData=res.data.result
+                    that.listData=res.data.result
+                    that.pagination.total=res.data.result.length
+                    that.mainData = that.listData.slice((that.pagination.currentPage - 1) * that.pagination.size,that.pagination.currentPage * that.pagination.size);
                 }else{
                     that.$message(res.data.msg)
                 }

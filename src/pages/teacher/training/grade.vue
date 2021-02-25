@@ -157,7 +157,7 @@
                     </div>
                     <div class="fuj">
                         附件：
-                        <a target='blank' :href="$api.serverUrl+'/'+nowTor.url">{{nowTor.urlName}}</a>
+                        <a target='blank' :href="$api.serverUrl+'/'+scoremodel.url">{{scoremodel.urlName}}</a>
                     </div>
                 </div>
                 </div>
@@ -223,6 +223,7 @@ export default {
             setData:{},
             scoreEdir:true,
             nowTor:{},
+            scoremodel:{},
             namelist:[]
         }
     },
@@ -282,6 +283,7 @@ export default {
         getPractice(){
             let that=this;
             this.$api.Training.getSgTeaching(this.setData.practiceId).then(res=>{
+               console.log("当前资源"+res.data)
                console.log(res.data)
                that.nowTor=res.data.result;
                if(that.nowTor.urlName.indexOf('.pdf')<0){
@@ -321,12 +323,35 @@ export default {
             }
             }, 0);
         },
+        //获取提交附件
+        getScoremodel(uid,pid){
+            let that=this;
+            let params={
+                "ScoreModelId":0,
+                "CreateBy":uid||0,
+                "CompetitionId":pid||0
+            }
+            this.$api.Competition.getScoremodel(params).then(res=>{
+                console.log(res.data.result)
+                if(res.data.result){
+                    that.scoremodel.urlName=res.data.result.urlName;
+                    that.scoremodel.url=res.data.result.url;
+                    that.getPractice();//获取资源路径
+                }else{
+
+                }
+            }).catch((error) => {
+                console.error(error);
+            })
+        },
         //获取任务书评分
         getTest(item){
             this.ediVisible=true;
+            this.scoreEdir=true;
             let that=this;
             this.setData=item
-            this.getPractice();//获取资源路径
+            this.getScoremodel(item.userId,item.competitionId)
+            
             let params={
                 "PracticeId":item.practiceId,
                 "UserId":item.userId

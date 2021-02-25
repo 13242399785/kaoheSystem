@@ -860,7 +860,7 @@ const article={
     //获取提交模型
     getScoremodel(params){
       let sessionId=localStorage.getItem('sessionId');
-      return axios.get(`${serverUrl}/Competition/GetScoremodel?ScoreModelId=${params.ScoreModelId}&PracticeId=${params.PracticeId}&CreateBy=${params.CreateBy}`,{
+      return axios.get(`${serverUrl}/Competition/GetScoremodel?ScoreModelId=${params.ScoreModelId}&CompetitionId=${params.CompetitionId}&CreateBy=${params.CreateBy}`,{
         headers:{
           'Authorization':Authorization_l+' '+sessionId
       }});

@@ -3,13 +3,13 @@
         <div class="auto margin-bot">
             <div class="item-list">
                 <span @click="getSub(0)" :class="parseInt(nowData.roleId)==0?'item-ative':''">全部({{listData.length}})</span>
-                <span  :class="parseInt(nowData.roleId)==parseInt(item.roleId)?'item-ative':''" @click="getSub(item.roleId)" v-for="(item,index) in roleList" :key="index">{{item.roleName}}</span>
+                <!-- <span  :class="parseInt(nowData.roleId)==parseInt(item.roleId)?'item-ative':''" @click="getSub(item.roleId)" v-for="(item,index) in roleList" :key="index">{{item.roleName}}</span> -->
             </div>
 			<p class="video-all"></p>
 			<div class="m-top clearfix">
 				<div class="m-left fl">
 					<!-- <el-checkbox >全选</el-checkbox> -->
-					<button class="button-auto button-delete">删除</button>
+					<!-- <button class="button-auto button-delete">删除</button> -->
 					<!-- <button class="button-add margin-l6" @click="dialogVisible=true">添加</button> -->
 				</div>
 				<div class="m-right fr">

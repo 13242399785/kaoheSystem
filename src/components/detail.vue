@@ -31,10 +31,18 @@
         </div>
       </div>
     </div>
-    <div class="document-show-content" style="height:63%;">
+    <div class="document-show-content">
         <div class="document-show-top" v-show="nowData.classId!==4" style="height:100%;">
           <div v-if="pdfShow"  style="height:100%;">
-            <iframe class="pdf-if" :src="pdfUrl" align="center"  style="height:100%;"></iframe>
+            <pdf 
+            class="pdf-if" 
+              ref="pdf"
+              v-for="i in numPages"
+              :key="i"
+              :src="pdfUrl"
+              :page="i">
+            </pdf>
+            <!-- <iframe class="pdf-if" :src="pdfUrl" align="center"  style="height:100%;"></iframe> -->
           </div>
           <div v-if="!pdfShow&&nowData.urlName">
             <img :src="srcCotrol(nowData.urlName)" alt="">
@@ -43,20 +51,29 @@
         </div>
         
         <div class="paf-waper" v-if="nowData.classId==4" >
-          <iframe class="pdf-if" :src="pdfUrl" align="center"></iframe>
+           <pdf 
+            class="pdf-if" 
+              ref="pdf"
+              v-for="i in numPages"
+              :key="i"
+              :src="pdfUrl"
+              :page="i">
+            </pdf>
+          <!-- <iframe class="pdf-if" :src="pdfUrl" align="center"></iframe> -->
         </div>
     </div>
     <slot name="content"></slot>
   </div>
 </template>
 <script>
+import pdf from 'vue-pdf'
 import hea from "@/components/headers/stu_header";
 import teahea from "@/components/headers/header";
 import navlist from "@/components/nav";
 export default {
   components: {
     hea,
-    navlist,teahea
+    navlist,teahea,pdf
   },
   data() {
     return {
@@ -66,7 +83,8 @@ export default {
       pdfUrl:'',
       namelist:[],
       nowChoose:false,
-      pdfShow:false
+      pdfShow:false,
+      numPages:1
     };
   },
   mounted(){
@@ -92,15 +110,25 @@ export default {
     //下载
     down(url) {
       window.location.href = this.$api.serverUrl+'/'+this.nowData.url;
-      console.log(this.nowData.url)
     },
+    //pdf资源
+    pdfTask(pdfUrl){
+        var that = this
+        var loadingTask = pdf.createLoadingTask(pdfUrl)  
+        loadingTask.promise.then(pdf => {
+          that.pdfUrl = loadingTask
+          that.numPages = pdf.numPages
+        }).catch((err) => {
+          console.error('pdf加载失败')
+      })
+      },
     //获取当前资源
     getNowtor(){
       let that=this
       this.$api[this.nowUrl].getSgTeaching(this.$route.params.id).then(res=>{
-          console.log(res.data)
           that.nowData=res.data.result
           that.pdfUrl=that.$api.serverUrl+'/'+that.nowData.url;
+          that.pdfTask(that.pdfUrl)
           if(this.nowData.urlName.indexOf('.pdf')>-1){
             this.pdfShow=true
           }
@@ -112,7 +140,6 @@ export default {
         let that=this;
         this.$api[this.nowUrl].getType().then(res=>{
             that.classList=res.data.result
-            console.log(res.data)
         }).catch((error) => {
             console.error(error);
         }) 
@@ -140,7 +167,6 @@ export default {
     },
     //缩略图
     srcCotrol(list){
-      console.log(list)
         var type=list.slice(list.lastIndexOf('.'),list.length)
         var src=list;
         //给图片
@@ -183,11 +209,14 @@ export default {
   text-align: center;
 }
 .paf-waper{
-  min-height: 500px;
+  // min-height: 500px;
   
 }
 .pdf-if{
-    min-height: 500px;
+    // min-height: 500px;
+    -moz-user-select:none;
+ -webkit-user-select: none;
+-ms-user-select: none;
     width: 100%;
   }
 </style>

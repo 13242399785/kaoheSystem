@@ -60,6 +60,7 @@
 						localStorage.setItem("userRadio",that.radio)
 						localStorage.setItem("userIds",res.data.user.userId)
 						localStorage.setItem("userName",that.username)
+						localStorage.setItem("roleId",res.data.user.roleId)
 						if(res.data.user.roleId==3){
 							this.$router.push({
 							　　name: 'teachingStudent', //

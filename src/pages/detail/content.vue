@@ -2,8 +2,8 @@
 <template>
   <detail>
     <div class="flex-wapper-content"  slot="banner-right" v-show="nowData.classId!=4">{{nowData.remarks}}</div>
-    <div class="flex-wapper-btn" v-show="nowData.classId==4" slot="banner-right">
-      <p class="fujian-up"><el-button @click="uploadFu">{{fuShow?'重新上传附件':'上传附件'}}
+    <div class="flex-wapper-btn" v-if="nowRole==3" v-show="nowData.classId==4" slot="banner-right">
+      <p class="fujian-up" ><el-button @click="uploadFu">{{fuShow?'重新上传附件':'上传附件'}}
           <input type="file" ref="fileFj" id="fileFj" @change="UploadStart" class="fu">
         </el-button><span class="fujian" v-show="fuShow" @click="downFu">{{nowData.urlName}}</span></p>
       <p><el-button class="pin" @click="setScore">老师评分</el-button></p>
@@ -167,12 +167,12 @@ export default {
       nowPoint:this.$api.serverUrl,
       nowFu:null,
       nameList:[],
+      nowRole:0
     };
   },
-  mounted(){
-    this.nowPoint=this.$api.serverUrl
+  created(){
     let url=window.location.href;
-    
+    this.nowRole=localStorage.getItem('roleId')
     if(url.indexOf('teaching')>-1){//教学
       this.nowUrl='Teaching'
     }else if(url.indexOf('competition')>-1){//竞赛
@@ -180,6 +180,10 @@ export default {
     }else if(url.indexOf('training')>-1){//实训
       this.nowUrl='Training'
     }
+  },
+  mounted(){
+    this.nowPoint=this.$api.serverUrl
+    
     // console.log(this.nowData)
     this.getNowtor()
     this.getClass()
@@ -197,7 +201,7 @@ export default {
       console.log(this.nowUrl)
       this.$api[this.nowUrl].getSgTeaching(this.$route.params.id).then(res=>{
           that.nowData=res.data.result
-          // console.log(this.nowData)
+          console.log(this.nowData)
           if(that.nowData.classId==4){
             that.getTorlist();//获取评分列表
             this.getScoremodel()
@@ -214,7 +218,7 @@ export default {
     //上传附件
     UploadStart(){
       var file = $("#fileFj")[0].files[0];
-      console.log('当前文件'+file)
+      let that=this;
       if(file.name.indexOf('.7z')>-1){
           this.$message('当前不允许上传该类型文件！')
           return false;
@@ -235,6 +239,12 @@ export default {
         //计算每一片的起始与结束位置
         var start = i * shardSize,
         end = Math.min(size, start + shardSize);
+        var upText='上传'
+        if(this.fuShow){
+          upText='覆盖'
+        }else{
+          upText='上传'
+        }
         //构造一个表单，FormData是HTML5新增的
         var form = new FormData();
         form.append("data", file.slice(start, end)); //slice方法用于切出文件的一部分
@@ -242,7 +252,8 @@ export default {
         form.append("fileName", name);
         form.append("total", shardCount); //总片数
         form.append("index", i + 1); //当前是第几片
-        this.UploadPath = file.lastModified
+        this.UploadPath = file.lastModified;
+        
         //Ajax提交文件
         $.ajax({
             url: that.$api.serverUrl+"/Upload/UploadFile",
@@ -258,21 +269,21 @@ export default {
                     that.percenSum=num
                     that.AjaxFile(file, i);
                     console.log(shardCount,i)   
+                    
                     if (result.mergeOk&&shardCount==i) {
-                        console.log(result)
-                        that.nowData.url=result.url
-                        that.nowData.urlName=result.fileName
-                        that.file=null
-                        that.$confirm('文件已上传完成，确认上传当前附件?', '提示', {
+                        that.$confirm('文件已上传完成，确认'+upText+'当前附件?', '提示', {
                           confirmButtonText: '确定',
                           cancelButtonText: '取消',
                           type: 'warning'
                         }).then(() => {
+                          that.nowData.url=result.url
+                          that.nowData.urlName=result.fileName
+                          that.file=null
                           that.addScoremodel()
                         }).catch(() => {
                           that.$message({
                             type: 'info',
-                            message: '已取消上传当前附件'
+                            message: '已取消'+upText+'当前附件'
                           });         
                         });
                         // that.$refs.fileFj.clearFiles()
@@ -304,8 +315,11 @@ export default {
       }else{
         params.PracticeId=this.$route.params.id
       }
+      console.log('dagnqianzhi :')
+      console.log(params)
       this.$api[this.nowUrl].getScoremodel(params).then(res=>{
-        // console.log(res.data.result)
+        console.log("当前资源")
+        console.log(res.data.result)
         if(res.data.result){
           that.nowData.urlName=res.data.result.urlName;
           that.scoreNow=res.data.result

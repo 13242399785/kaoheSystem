@@ -1,29 +1,32 @@
 <template>
-    <div class="auto">
+    <div class="">
         <div class="auto margin-bot">
             <div class="item-list">
                 <span @click="getSub(0)" :class="parseInt(nowData.roleId)==0?'item-ative':''">全部({{mainData.length}})</span>
-                <span  :class="parseInt(nowData.roleId)==parseInt(item.roleId)?'item-ative':''" @click="getSub(item.roleId)" v-for="(item,index) in roleList" :key="index">{{item.roleName}}</span>
+                <!-- <span  :class="parseInt(nowData.roleId)==parseInt(item.roleId)?'item-ative':''" @click="getSub(item.roleId)" v-for="(item,index) in roleList" :key="index">{{item.roleName}}</span> -->
             </div>
 			<p class="video-all"></p>
 			<div class="m-top clearfix">
 				<div class="m-left fl">
 					<!-- <el-checkbox >全选</el-checkbox> -->
-					<button class="button-auto button-delete">删除</button>
+					<!-- <button class="button-auto button-delete">删除</button> -->
 					<button class="button-add margin-l6" @click="addUser">添加</button>
 				</div>
 				<div class="m-right fr">
 					<el-input
 					    placeholder="请输入关键字"
 					    suffix-icon="el-icon-search"
+                        v-model="searchData.Name"
 					    >
 					  </el-input>
+                      <div class="sou-w" @click="fleeData">搜索</div>
 				</div>
 			</div>
 			<!--table-->
             <el-table
-                class="my_table"
+                class="my_table my_table-h"
                 :data="mainData" 
+                height="560"
                 @selection-change="handleSelectionChange"
                 style="width: 100%">
                 <el-table-column
@@ -98,6 +101,7 @@
             v-dialogDrag
             :title="dialogText"
             :visible.sync="dialogVisible"
+            
             width="400px" 
             :close-on-click-modal='false'
             >
@@ -185,9 +189,12 @@ export default {
             pagination: {
                 //分页参数
                 arr: [10, 20, 30, 40, 50],
-                size: 20,
+                size: 10,
                 currentPage: 1,
                 total:0
+            },
+            searchData:{
+                Name:''
             },
             listData:[]
         }
@@ -229,12 +236,16 @@ export default {
             console.log(id)
             this.nowData.roleId=id
         },
+        //序号
+        getIndex(index){
+            return (this.pagination.currentPage-1)*this.pagination.size+index+1;
+        },
         setEm(item){
             this.dialogVisible=true
             this.nowControl=1
             this.thisUser={
                 "userId": item.userId,
-                "userName": item.userName,
+                "userName": item.loginId,
                 "loginId": item.loginId,
                 "loginPwd": item.loginPwd,
                 "telNo": item.telNo,
@@ -259,10 +270,39 @@ export default {
             
             console.log(item)
         },
+        // 查找过滤
+        fleeData(){
+            
+            let that=this,data;
+            let str=this.searchData.Name;
+            if(this.listData.length==0){
+                data=[]
+            }else if(str==''){
+               data = that.listData.slice(0, that.pagination.size)
+            }else if(str){
+                data=[];
+                that.listData.forEach(el => {
+                    if(el.loginId.indexOf(str)!=-1){
+                        data.push(el)
+                    }
+                });
+            }
+            // console.log(data)
+            this.mainData=data   
+        },
         saveUser(){
             let that=this;
+            if(this.thisUser.loginId==''){
+                this.$message('用户名称不能为空！')
+                return false
+            }
+            if(this.thisUser.loginPwd==''){
+                this.$message('密码不能为空！')
+                return false
+            }
             //新增
             if(!this.nowControl){
+                this.thisUser.userName=this.thisUser.loginId
                 this.$api.User.addUser(this.thisUser).then(res=>{
                     if(res.data.success){
                         that.$message.success('新增成功！')
@@ -361,5 +401,7 @@ export default {
 }
 </script>
 <style lang="scss">
-
+.my_table-h{
+    height: 100%;
+}
 </style>
