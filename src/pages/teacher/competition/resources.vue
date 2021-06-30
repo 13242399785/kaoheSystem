@@ -304,6 +304,7 @@ export default {
             }) 
         },
         beforeUploadVideo(file){
+            console.log(file)
             if(this.nowTaskIndex==0&&file.type!='application/pdf'){
                 this.$message('任务书必须上传pdf文件！')
                 return false;
@@ -313,6 +314,7 @@ export default {
                 return false;
             }
             this.uploadShow=false
+            
             this.AjaxFile(file,0)
             console.log(this.nowTaskIndex)
             return false;

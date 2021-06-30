@@ -302,8 +302,6 @@ export default {
         getPractice(){
             let that=this;
             this.$api.Competition.getSgTeaching(this.setData.competitionId).then(res=>{
-               console.log("资源")
-               console.log(res.data)
                that.nowTor=res.data.result;
                if(that.nowTor.urlName.indexOf('.pdf')<0){
                    that.$message('当前任务书不是pdf文件不能展示！')
