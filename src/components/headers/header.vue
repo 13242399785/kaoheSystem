@@ -17,18 +17,20 @@
 							<li v-for='(item,index) in navList' :key='index' :to="item.name">{{item.content}}</li>
 						</ul> -->
 					</div>
-					<span class="unlogin" v-show="unlogin" @click="removeS"><router-link to="/login">退出登录</router-link></span>
-					<span class="info" v-if="false">
-						....
-						<!--<i class="el-icon-videoxiaoxi"></i>-->
-					</span>
+					
+					<!-- <span class="unlogin" v-show="unlogin" @click="removeS"><router-link to="/login">退出登录</router-link></span> -->
 
 					<span class="info-list" v-if="false"></span>
-					<span class="user-control" @click="quit">
+					<div class="user-control" @click="quit">
 						<span class="user-name">{{username}}</span>
 						<img src="../../images/user.jpg" height="31" width="31" class="user-img"/>
 						<i class="el-icon-caret-bottom"></i>
-					</span>
+						<div class="loout">
+							<!-- <p>使用教程</p> -->
+							<!-- <p @click="goAbout">关于我们</p> -->
+							<p @click="loginOut">退出登录</p>
+						</div>
+					</div>
 					
 				</div>
 			</div>
@@ -86,6 +88,9 @@
 				localStorage.removeItem("userRadio")
 				localStorage.removeItem("userIds")
 			},
+			loginOut(){
+				this.$router.push({name:'login'});
+			},
 			goRoter(name){
 				console.log(this.nowUrl)
 				this.$router.push({name:name})
@@ -113,6 +118,43 @@
 			color: #f19149;border-bottom-left-radius: 1px;border-bottom-right-radius: 1px;
 		}
 	}
+	.user-control{cursor: pointer;position: relative;}
+	.loout{
+      height: 0;
+      overflow: hidden;
+      opacity: 0;
+      top: 31px;
+      z-index: 99;
+      right: 0;
+      transition: all ease 0.5s;
+      position: absolute;
+      width: 150px;
+      line-height: 0;
+      text-align: center;
+      background: #ffffff;
+      cursor: pointer;
+      color: #222;
+      p{
+        font-size: 14px;
+        line-height: 30px;
+        border-bottom: 1px solid #ccc;
+        margin-bottom: 0;
+        padding: 10px 20px;
+        cursor: pointer;
+      }
+      p:last-child{
+        border-bottom: none;
+      }
+      p:hover{   
+        background: #f1f1f1;
+      }
+    }
+    .user-control:hover .loout{
+      height: auto;
+      line-height: 40px;
+      opacity: 1;
+      border: 1px solid #ccc;
+    }
 </style>
 <style>
 	.header{
@@ -140,7 +182,7 @@
 	.header-right .el-icon-caret-bottom{color: #f19149;font-size: 20px;}
 	.info{vertical-align: top;color: #585858;padding-right: 25px;}
 	.info-list{height: 13px;width: 13px;background: #e60012;border-radius: 50%;display: inline-block;position: absolute;left: 15px;top:5px;}
-	.user-control{cursor: pointer;}
+	
 	.unlogin{font-size: 14px;background: rgba(0,0,0,0.3);padding:5px 12px;position: absolute;right: 0px;top:32px;}
 	.unlogin a{color: #fff;}
 	.user-img{vertical-align: middle;border-radius: 50%;}

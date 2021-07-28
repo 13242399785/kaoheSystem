@@ -43,11 +43,12 @@ export default {
 .auto{height: 100%;}
 .bg-img{
 	/* position: absolute; */
-	margin-top: 180px;
+	margin-top: 10%;
 	left: 0px;
+	width: 54%;
 }
 @media screen and (max-width: 1240px) {
-			html,body{height: auto;}
+			/* html,body{height: auto;} */
 			.login{overflow-y: none;}
 			.footer{margin-top: 20px;}
 	}

@@ -98,8 +98,8 @@
 	.login-input .el-radio__input.is-checked+.el-radio__label{color: #333;}
 	.login-input .el-input{margin-bottom: 28px;}
 	.login-input{height: 344px;width: 450px;background: #fff;border-radius: 8px;position: absolute;
-		top: 330px;
-		left: 832px;
+		top: 31%;
+		right: 2%;
 		padding: 5px;
 		text-align: center;
 	}
